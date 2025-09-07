@@ -29,11 +29,11 @@ Reset_Handler:
 
     la      sp, g_top_irqstack
   20:	20001117          	auipc	sp,0x20001
-  24:	fe410113          	addi	sp,sp,-28 # 20001004 <uart_instance>
+  24:	ff010113          	addi	sp,sp,-16 # 20001010 <uart_instance>
 
     /* Load data section */
     la      a0, __erodata
-  28:	2a400513          	li	a0,676
+  28:	30c00513          	li	a0,780
     la      a1, __data_start__
   2c:	f4018593          	addi	a1,gp,-192 # 20000000 <console_handle>
     la      a2, __data_end__
@@ -58,7 +58,7 @@ Reset_Handler:
   48:	f4018513          	addi	a0,gp,-192 # 20000000 <console_handle>
     la      a1, __bss_end__
   4c:	20001597          	auipc	a1,0x20001
-  50:	03058593          	addi	a1,a1,48 # 2000107c <__bss_end__>
+  50:	0fc58593          	addi	a1,a1,252 # 20001148 <__bss_end__>
     bgeu    a0, a1, 2f
   54:	00b57763          	bgeu	a0,a1,62 <Reset_Handler+0x62>
 1:
@@ -70,20 +70,20 @@ Reset_Handler:
   5e:	feb56de3          	bltu	a0,a1,58 <Reset_Handler+0x58>
 2:
 
-
-    #jal     SystemInit
+    jal     system_init
+  62:	180000ef          	jal	ra,1e2 <system_init>
     jal     board_init
-  62:	184000ef          	jal	ra,1e6 <board_init>
+  66:	1ec000ef          	jal	ra,252 <board_init>
     jal     entry
-  66:	1a6000ef          	jal	ra,20c <entry>
+  6a:	20e000ef          	jal	ra,278 <entry>
 
-0000006a <__exit>:
+0000006e <__exit>:
 
     .size   Reset_Handler, . - Reset_Handler
 
 __exit:
     j      __exit
-  6a:	a001                	j	6a <__exit>
+  6e:	a001                	j	6e <__exit>
 	...
 
 00000080 <Default_IRQHandler>:
@@ -213,7 +213,7 @@ uart_handle_t drv_uart_initialize(int32_t idx, uart_event_cb_t cb_event){
  14a:	03c00513          	li	a0,60
  14e:	02a40533          	mul	a0,s0,a0
  152:	200017b7          	lui	a5,0x20001
- 156:	00478793          	addi	a5,a5,4 # 20001004 <uart_instance>
+ 156:	01078793          	addi	a5,a5,16 # 20001010 <uart_instance>
  15a:	953e                	add	a0,a0,a5
     uart_priv->base = base;
  15c:	4782                	lw	a5,0(sp)
@@ -307,7 +307,7 @@ int32_t target_uart_init(int32_t idx, uint32_t *base, uint32_t *gpio_base ,uint3
  1a0:	c981                	beqz	a1,1b0 <target_uart_init+0x10>
         *base = sg_uart_config[idx].base;
  1a2:	00451793          	slli	a5,a0,0x4
- 1a6:	25000313          	li	t1,592
+ 1a6:	2b000313          	li	t1,688
  1aa:	979a                	add	a5,a5,t1
  1ac:	439c                	lw	a5,0(a5)
  1ae:	c19c                	sw	a5,0(a1)
@@ -317,7 +317,7 @@ int32_t target_uart_init(int32_t idx, uint32_t *base, uint32_t *gpio_base ,uint3
  1b0:	ca01                	beqz	a2,1c0 <target_uart_init+0x20>
         *gpio_base = sg_uart_config[idx].gpio_base;
  1b2:	00451793          	slli	a5,a0,0x4
- 1b6:	25000593          	li	a1,592
+ 1b6:	2b000593          	li	a1,688
  1ba:	97ae                	add	a5,a5,a1
  1bc:	47dc                	lw	a5,12(a5)
  1be:	c21c                	sw	a5,0(a2)
@@ -327,7 +327,7 @@ int32_t target_uart_init(int32_t idx, uint32_t *base, uint32_t *gpio_base ,uint3
  1c0:	ca81                	beqz	a3,1d0 <target_uart_init+0x30>
         *irq = sg_uart_config[idx].irq;
  1c2:	00451793          	slli	a5,a0,0x4
- 1c6:	25000613          	li	a2,592
+ 1c6:	2b000613          	li	a2,688
  1ca:	97b2                	add	a5,a5,a2
  1cc:	43dc                	lw	a5,4(a5)
  1ce:	c29c                	sw	a5,0(a3)
@@ -337,7 +337,7 @@ int32_t target_uart_init(int32_t idx, uint32_t *base, uint32_t *gpio_base ,uint3
  1d0:	cb01                	beqz	a4,1e0 <target_uart_init+0x40>
         *handler = sg_uart_config[idx].handler;
  1d2:	00451793          	slli	a5,a0,0x4
- 1d6:	25000693          	li	a3,592
+ 1d6:	2b000693          	li	a3,688
  1da:	97b6                	add	a5,a5,a3
  1dc:	479c                	lw	a5,8(a5)
  1de:	c31c                	sw	a5,0(a4)
@@ -346,92 +346,193 @@ int32_t target_uart_init(int32_t idx, uint32_t *base, uint32_t *gpio_base ,uint3
 }
  1e0:	8082                	ret
 
-000001e2 <UART0_IRQHandler>:
- 1e2:	8082                	ret
+000001e2 <system_init>:
 
-000001e4 <UART1_IRQHandler>:
- 1e4:	8082                	ret
+    //config core timer
+    drv_irq_enable(CORET_IRQn); //enable core timer interrupt
+}
 
-000001e6 <board_init>:
-#include "soc.h"
+void system_init(void){
+ 1e2:	1151                	addi	sp,sp,-12
+ 1e4:	c406                	sw	ra,8(sp)
+    //config core local interrupt controller
+    //CLIC->CLICCFG = 0x4UL;
+
+    //set interrupt pendding
+    for (int i = 0; i < 12; i++) {
+ 1e6:	4701                	li	a4,0
+        CLIC->INT[i].CLICINTIP = 0;
+ 1e8:	e0800637          	lui	a2,0xe0800
+    for (int i = 0; i < 12; i++) {
+ 1ec:	46b1                	li	a3,12
+        CLIC->INT[i].CLICINTIP = 0;
+ 1ee:	40070793          	addi	a5,a4,1024
+ 1f2:	078a                	slli	a5,a5,0x2
+ 1f4:	97b2                	add	a5,a5,a2
+ 1f6:	00078023          	sb	zero,0(a5)
+    for (int i = 0; i < 12; i++) {
+ 1fa:	0705                	addi	a4,a4,1
+ 1fc:	fed719e3          	bne	a4,a3,1ee <system_init+0xc>
+    }
+    drv_irq_enable(MACH_SOFT_IRQn); //enable machine software interrupt
+ 200:	450d                	li	a0,3
+ 202:	20b9                	jal	250 <drv_irq_enable>
+    irq_vectors_init();
+ 204:	2029                	jal	20e <irq_vectors_init>
+    _system_init_for_kernel();      //setting default interrupt and core timer interrupt
+}
+ 206:	40a2                	lw	ra,8(sp)
+    drv_irq_enable(CORET_IRQn); //enable core timer interrupt
+ 208:	451d                	li	a0,7
+}
+ 20a:	0131                	addi	sp,sp,12
+    drv_irq_enable(CORET_IRQn); //enable core timer interrupt
+ 20c:	a091                	j	250 <drv_irq_enable>
+
+0000020e <irq_vectors_init>:
+extern void CORET_IRQHandler(void);
+
+void (*g_irqvector[48])(void);
+
+void irq_vectors_init(void){
+    for (int i = 0; i < 48; i++) {
+ 20e:	20001737          	lui	a4,0x20001
+ 212:	08870793          	addi	a5,a4,136 # 20001088 <g_irqvector>
+        g_irqvector[i] = Default_Handler;
+ 216:	0c078613          	addi	a2,a5,192
+ 21a:	08870713          	addi	a4,a4,136
+ 21e:	0c000693          	li	a3,192
+ 222:	c394                	sw	a3,0(a5)
+    for (int i = 0; i < 48; i++) {
+ 224:	0791                	addi	a5,a5,4
+ 226:	fec79ee3          	bne	a5,a2,222 <irq_vectors_init+0x14>
+    }
+    g_irqvector[CORET_IRQn] = CORET_IRQHandler;
+ 22a:	23200793          	li	a5,562
+ 22e:	cf5c                	sw	a5,28(a4)
+}
+ 230:	8082                	ret
+
+00000232 <CORET_IRQHandler>:
+extern void systick_handler(void);
+
+#define  ATTRIBUTE_ISR
+
+ATTRIBUTE_ISR void CORET_IRQHandler(void){
+    systick_handler();
+ 232:	a019                	j	238 <systick_handler>
+
+00000234 <UART0_IRQHandler>:
+ 234:	8082                	ret
+
+00000236 <UART1_IRQHandler>:
+ 236:	8082                	ret
+
+00000238 <systick_handler>:
+#include "../include/soc.h"
+
+uint64_t g_sys_tick_count;
+void systick_handler(void){
+    g_sys_tick_count++;
+ 238:	f4818793          	addi	a5,gp,-184 # 20000008 <g_sys_tick_count>
+ 23c:	4398                	lw	a4,0(a5)
+ 23e:	43d0                	lw	a2,4(a5)
+ 240:	00170693          	addi	a3,a4,1
+ 244:	00e6b733          	sltu	a4,a3,a4
+ 248:	9732                	add	a4,a4,a2
+ 24a:	c394                	sw	a3,0(a5)
+ 24c:	c3d8                	sw	a4,4(a5)
+}
+ 24e:	8082                	ret
+
+00000250 <drv_irq_enable>:
+extern void Default_Handler(void);
+extern void (*g_irqvector[])(void);
+
+void drv_irq_enable (uint32_t irq_num){
+    vic_enable_irq(irq_num);
+}
+ 250:	8082                	ret
+
+00000252 <board_init>:
+#include "../driver/include/soc.h"
 
 extern uart_handle_t console_handle;
 
 void board_init(void)
 {
- 1e6:	1151                	addi	sp,sp,-12
+ 252:	1151                	addi	sp,sp,-12
     int ret = 0;
     console_handle = drv_uart_initialize(0, NULL);
- 1e8:	4581                	li	a1,0
- 1ea:	4501                	li	a0,0
+ 254:	4581                	li	a1,0
+ 256:	4501                	li	a0,0
 {
- 1ec:	c406                	sw	ra,8(sp)
+ 258:	c406                	sw	ra,8(sp)
     console_handle = drv_uart_initialize(0, NULL);
- 1ee:	3789                	jal	130 <drv_uart_initialize>
+ 25a:	3dd9                	jal	130 <drv_uart_initialize>
 
     ret = drv_uart_config_baudrate(console_handle, 217, (UTX_START | URX_START ));
- 1f0:	460d                	li	a2,3
- 1f2:	0d900593          	li	a1,217
+ 25c:	460d                	li	a2,3
+ 25e:	0d900593          	li	a1,217
     console_handle = drv_uart_initialize(0, NULL);
- 1f6:	f4a1a023          	sw	a0,-192(gp) # 20000000 <console_handle>
+ 262:	f4a1a023          	sw	a0,-192(gp) # 20000000 <console_handle>
     ret = drv_uart_config_baudrate(console_handle, 217, (UTX_START | URX_START ));
- 1fa:	3741                	jal	17a <drv_uart_config_baudrate>
+ 266:	3f11                	jal	17a <drv_uart_config_baudrate>
 
-    printf("Boad init UART0 \r\n");
+    printf("boad init console uart0 \r\n");
 
     if(ret < 0 ) { return; }
 }
- 1fc:	40a2                	lw	ra,8(sp)
-    printf("Boad init UART0 \r\n");
- 1fe:	27000513          	li	a0,624
+ 268:	40a2                	lw	ra,8(sp)
+    printf("boad init console uart0 \r\n");
+ 26a:	2d000513          	li	a0,720
 }
- 202:	0131                	addi	sp,sp,12
-    printf("Boad init UART0 \r\n");
- 204:	a831                	j	220 <puts>
+ 26e:	0131                	addi	sp,sp,12
+    printf("boad init console uart0 \r\n");
+ 270:	a831                	j	28c <puts>
 
-00000206 <app_init>:
+00000272 <app_init>:
     return 0;
 }
 
 void app_init(void){
     //start main thread
     printf("Start Main Thread \r\n");
- 206:	28400513          	li	a0,644
- 20a:	a819                	j	220 <puts>
+ 272:	2ec00513          	li	a0,748
+ 276:	a819                	j	28c <puts>
 
-0000020c <entry>:
+00000278 <entry>:
 int entry(){
- 20c:	1151                	addi	sp,sp,-12
+ 278:	1151                	addi	sp,sp,-12
     printf("Entry OS \r\n");
- 20e:	29800513          	li	a0,664
+ 27a:	30000513          	li	a0,768
 int entry(){
- 212:	c406                	sw	ra,8(sp)
+ 27e:	c406                	sw	ra,8(sp)
     printf("Entry OS \r\n");
- 214:	2031                	jal	220 <puts>
+ 280:	2031                	jal	28c <puts>
     app_init();
- 216:	3fc5                	jal	206 <app_init>
+ 282:	3fc5                	jal	272 <app_init>
 }
- 218:	40a2                	lw	ra,8(sp)
- 21a:	4501                	li	a0,0
- 21c:	0131                	addi	sp,sp,12
- 21e:	8082                	ret
+ 284:	40a2                	lw	ra,8(sp)
+ 286:	4501                	li	a0,0
+ 288:	0131                	addi	sp,sp,12
+ 28a:	8082                	ret
 
-00000220 <puts>:
- 220:	1151                	addi	sp,sp,-12
- 222:	c222                	sw	s0,4(sp)
- 224:	c406                	sw	ra,8(sp)
- 226:	842a                	mv	s0,a0
- 228:	00044503          	lbu	a0,0(s0)
- 22c:	55fd                	li	a1,-1
- 22e:	e901                	bnez	a0,23e <puts+0x1e>
- 230:	4529                	li	a0,10
- 232:	35e1                	jal	fa <fputc>
- 234:	40a2                	lw	ra,8(sp)
- 236:	4412                	lw	s0,4(sp)
- 238:	4501                	li	a0,0
- 23a:	0131                	addi	sp,sp,12
- 23c:	8082                	ret
- 23e:	3d75                	jal	fa <fputc>
- 240:	0405                	addi	s0,s0,1
- 242:	b7dd                	j	228 <puts+0x8>
-	...
+0000028c <puts>:
+ 28c:	1151                	addi	sp,sp,-12
+ 28e:	c222                	sw	s0,4(sp)
+ 290:	c406                	sw	ra,8(sp)
+ 292:	842a                	mv	s0,a0
+ 294:	00044503          	lbu	a0,0(s0)
+ 298:	55fd                	li	a1,-1
+ 29a:	e901                	bnez	a0,2aa <puts+0x1e>
+ 29c:	4529                	li	a0,10
+ 29e:	3db1                	jal	fa <fputc>
+ 2a0:	40a2                	lw	ra,8(sp)
+ 2a2:	4412                	lw	s0,4(sp)
+ 2a4:	4501                	li	a0,0
+ 2a6:	0131                	addi	sp,sp,12
+ 2a8:	8082                	ret
+ 2aa:	3d81                	jal	fa <fputc>
+ 2ac:	0405                	addi	s0,s0,1
+ 2ae:	b7dd                	j	294 <puts+0x8>

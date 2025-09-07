@@ -1,6 +1,6 @@
-#include "drv_uart.h"
-#include "drv_timer.h"
-#include "soc.h"
+//#include "../include/drv_uart.h"
+//#include "../include/drv_timer.h"
+#include "../include/soc.h"
 
 /****** TIMER *****/
 extern void TIM0_IRQHandler(void);

@@ -110,8 +110,7 @@ Reset_Handler:
     bltu    a0, a1, 1b
 2:
 
-
-    #jal     SystemInit
+    jal     system_init
     jal     board_init
     jal     entry
 

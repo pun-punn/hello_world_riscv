@@ -33,7 +33,8 @@ MV      = mv
 
 #include
 INCLUDEDIRS = \
-              -I$(OSDIR)/core           \
+              -I$(OSDIR)/core          \
+              -I$(OSDIR)/core/rv32      \
               -I$(OSDIR)/driver/include  \
               -I$(OSDIR)/libs/include     \
 	      -I$(APPDIR)/include          \

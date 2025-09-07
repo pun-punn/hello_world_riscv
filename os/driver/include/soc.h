@@ -3,11 +3,24 @@
 #ifndef SOC_H
 #define SOC_H
 
-//#include "core.h"
+#include "../../core/core.h"
 
-#define   _I     volatile const
-#define   _O     volatile
-#define   _IO    volatile
+typedef enum irqn {
+	USER_SOFT_IRQn  =   0,      /* User software interrupt */
+	SUPER_SOFT_IRQn =   1,      /* Supervisor software interrupt */
+	MACH_SOFT_IRQn  =   3,      /* Machine software interrupt */
+	USER_TIM_IRQn   =   4,      /* User timer interrupt */
+	SUPER_TIM_IRQn  =   5,      /* Supervisor timer interrupt */
+	CORET_IRQn      =   7,      /* core Timer Interrupt */
+	TIM0_IRQn       =   32,     /* timer0 Interrupt */
+	TIM1_IRQn       =   33,     /* timer1 Interrupt */
+	TIM2_IRQn       =   34,     /* timer2 Interrupt */
+	TIM3_IRQn       =   35,     /* timer3 Interrupt */
+	TIM4_IRQn       =   36,     /* timer4 Interrupt */
+	UART0_IRQn      =   37,     /* uart0 Interrupt */
+	UART1_IRQn      =   39,     /* uart1 Interrupt */
+} irqn_t;
+
 
 // -------------- AHB -------------------
 
@@ -115,19 +128,5 @@ typedef struct
 #define GPIO_TOG        0b0110    
 
 // -------------------------------------------------------------
-
-
-/*********************************************************************************/
-/*                              RISC-V MTIME Interrupt                           */
-/*********************************************************************************/
-
-#define CLINT_BASE      0xE0000000
-#define CLINT_MTIMECMP  (CLINT_BASE + 0x004000)  // Machine Timer Compare
-#define CLINT_MTIME     (CLINT_BASE + 0x00BFF8)  // Machine Timer
-#define CLINT_MTIMEINT  (CLINT_BASE + 0x80101C)  // Machine Timer Setting 
-
-												   // 0x800000+((16+16)*4)=0x80
-#define CLINT_APB_TIMEINT (CLINT_BASE + 0x801080)  // APB Timer Setting EXT16
-
 
 #endif //SOC_H

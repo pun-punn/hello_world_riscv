@@ -1,18 +1,10 @@
 #ifndef CORE_H
 #define CORE_H
 
-//#include "core_rv32.h"
+#define e902
 
-//#define __riscv
-
-//#if defined(__riscv)
-//#include "core_rv32.h"
-//#endif
-
-//temp
-#define   _I     volatile const
-#define   _O     volatile
-#define   _IO    volatile
-
+#if defined(e902)
+#include "rv32/core_e902.h"
+#endif
 
 #endif //CORE_H

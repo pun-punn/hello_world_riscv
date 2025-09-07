@@ -10,9 +10,8 @@
  * @date
  ******************************************************************************/
 #include <stdio.h>
-#include <stdint.h>
-#include "drv_uart.h"
-#include "soc.h"
+#include "../driver/include/drv_uart.h"
+#include "../driver/include/soc.h"
 
 extern uart_handle_t console_handle;
 
@@ -23,7 +22,7 @@ void board_init(void)
 
     ret = drv_uart_config_baudrate(console_handle, 217, (UTX_START | URX_START ));
 
-    printf("Boad init UART0 \r\n");
+    printf("boad init console uart0 \r\n");
 
     if(ret < 0 ) { return; }
 }

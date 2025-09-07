@@ -7,7 +7,7 @@
 
 typedef void *timer_handle_t;
 
-typedef struct{
+typedef struct {
     _IO  uint32_t BASE;
     _I   uint32_t CNT;
     _IO  uint32_t CFG;

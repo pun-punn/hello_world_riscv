@@ -1,5 +1,5 @@
-#include "drv_uart.h"
-#include "soc.h"
+#include "../include/drv_uart.h"
+#include "../include/soc.h"
 
 //private variable
 typedef struct {

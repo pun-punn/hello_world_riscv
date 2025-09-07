@@ -1,0 +1,68 @@
+#ifndef CORE_E902_H
+#define CORE_E902_H
+
+#include <stdint.h>
+#include "core_e902_gcc.h"
+
+#define   _I     volatile const
+#define   _O     volatile
+#define   _IO    volatile
+
+typedef struct{
+    _IO uint32_t MSIP;
+} CLINTMODE_TypeDef;
+
+typedef struct{
+    _IO uint32_t MTIMECMPLO;
+    _IO uint32_t MTIMECMPHI;
+} CLINTCMP_TypeDef;
+
+typedef struct{
+    _I uint32_t MTIMELO;
+    _I uint32_t MTIMEHI;
+} CLINTTIME_TypeDef;
+
+typedef struct{
+    _IO uint8_t CLICINTIP;
+    _IO uint8_t CLICINTIE;
+    _IO uint8_t CLICINTATTR;
+    _IO uint8_t CLICINTCTRL;
+} CLIC_INT_TypeDef;
+
+typedef struct{
+    _IO uint32_t     CLICCFG;          //0xE0800000
+    _I  uint32_t     CLICINFO;         //0xE0800004
+    _IO uint32_t     MINTTHRESH;       //0xE0800008
+    _I  uint32_t     RESERVED0[0x3FD]; //0xE080000c - 0xE0800FFF
+    CLIC_INT_TypeDef INT[256];         //0xE0801000
+} CLIC_TypeDef;
+
+typedef struct{
+    CLIC_INT_TypeDef INT[256];         //0xE0801000
+} CLIC_INTER_TypeDef;
+
+#define TCIP_BASE      0xE0000000
+#define CLINT_BASE     TCIP_BASE
+#define CLINT_MTIMECMP (CLINT_BASE + 0x004000)
+#define CLINT_MTIME    (CLINT_BASE + 0x00BFF8)
+#define CLIC_BASE      (TCIP_BASE  + 0x800000)
+#define CLIC_CFG        CLIC_BASE
+#define CLIC_INT       (CLIC_BASE  +   0x1000)
+
+#define CLINTMODE      ((CLINTMODE_TypeDef  *) CLINT_BASE)
+#define CLINTCMP       ((CLINTCMP_TypeDef   *) CLINT_MTIMECMP)
+#define CLINTTIME      ((CLINTTIME_TypeDef  *) CLINT_MTIME)
+#define CLIC           ((CLIC_TypeDef       *) CLIC_BASE)
+#define CLIC_I         ((CLIC_INTER_TypeDef *) CLIC_INT)
+
+
+__STATIC_INLINE void vic_enable_irq(int32_t IRQn){
+    //CLIC->INT[IRQn].CLICINTIE |=
+}
+
+__STATIC_INLINE void vic_disable_irq(int32_t IRQn){
+    //CLIC->INT[IRQn].CLICINTIE &=
+}
+#endif //CORE_E902_H
+
+

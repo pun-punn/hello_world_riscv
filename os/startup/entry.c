@@ -7,7 +7,7 @@
 int  os_startup(void);
 void app_init(void);
 
-extern void main(void);
+extern int main(void);
 
 int entry(){
     printf("Entry OS \r\n");
