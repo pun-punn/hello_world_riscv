@@ -37,7 +37,7 @@ irq_nested_level:
     .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
 Default_IRQHandler:
-    nop
+    nop #wake function not do any thing need to be generic irq
 
 /******************************************************************************
  * Functions:
@@ -48,7 +48,46 @@ Default_IRQHandler:
     .global trap
     .type   trap, %function
 trap:
-    nop
+    addi    sp, sp, -4
+    sw      t0, 0x0(sp)
+    csrr    t0, mcause
+
+    blt     t0, x0, .Lirq # check MSB 1 or 0
+
+    # go to exception
+    addi    sp, sp, 4      # store sp from previous -4
+
+    la      t0, g_trap_sp  # load address g_trap_sp
+    addi    t0, t0, -68    # reserve 17*4 for x1-x15, mepc, mstatus
+    sw      x1, 0(t0)
+    sw      x2, 4(t0)
+    sw      x3, 8(t0)
+    sw      x4, 12(t0)
+    sw      x6, 20(t0)
+    sw      x7, 24(t0)
+    sw      x8, 28(t0)
+    sw      x9, 32(t0)
+    sw      x10, 36(t0)
+    sw      x11, 40(t0)
+    sw      x12, 44(t0)
+    sw      x13, 48(t0)
+    sw      x14, 52(t0)
+    sw      x15, 56(t0)
+    csrr    a0, mepc
+    sw      a0, 60(t0)
+    csrr    a0, mstatus
+    sw      a0, 64(t0)
+
+    mv      a0, t0      # g_trap_sp-68 to a0
+    lw      t0, -4(sp)  # load sp to t0
+    mv      sp, a0      # sp = g_trap_sp-68
+    sw      t0, 16(sp)  # load sp to t0 it just pass arg base address x1 to trap_c
+
+    jal     trap_c       # jump to trap_c in drv_trap.c
+.Lirq:
+    lw      t0, 0x0(sp)
+    addi    sp, sp, 4
+    j       Default_IRQHandler
 
     .align  6
     .weak   Default_Handler
