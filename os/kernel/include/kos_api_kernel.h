@@ -3,9 +3,7 @@
 
 #include <stdint.h>
 
-
 typedef int32_t k_status_t;
-
 
 typedef enum  {
     KPRIO_IDLE            = 0,          ///< priority: idle (lowest)
@@ -61,7 +59,6 @@ typedef enum  {
     KPRIO_ERROR                         ///< Illegal priority
 } k_priority_t;
 
-
 // entry point of a task
 typedef void (*k_task_entry_t) (void *arg) ;
 
@@ -76,7 +73,12 @@ k_status_t kos_kernel_start(void);
 
 // create new task
 k_status_t kos_kernel_task_new(k_task_entry_t task, const char *name, void *arg,
-                               k_priority_t prio, uint32_t time_quata,
-                               void *stack, uint32_t stack_szie, k_task_handle_t *task_handle);
+                               k_priority_t prio, uint32_t time_quanta,
+                               void *stack, uint32_t stack_size, k_task_handle_t *task_handle);
+// suspend scheduler
+uint32_t kos_kernel_sched_suspend(void);
+
+// resume scheduler
+void kos_kernel_sched_resume(uint32_t sleep_ticks);
 
 #endif //KOS_API_KERNEL
