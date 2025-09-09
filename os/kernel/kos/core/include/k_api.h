@@ -15,13 +15,18 @@ extern "C" {
 #include "k_err.h"
 #include "k_critical.h"
 #include "k_sys.h"
-#include "k_obj.h"
-
+#include "k_bitmap.h"
 #include "k_list.h"
+#include "k_obj.h"
 #include "k_sched.h"
 #include "k_task.h"
 
+#include "k_sem.h"
+#include "k_time.h"
+#include "k_stats.h"
 #include "k_internal.h"
+
+#include "../../arch/include/port.h"
 
 #ifdef __cplusplus
 }

@@ -6,8 +6,9 @@ typedef enum{
     RHINO_SYS_FATAL_ERR,
     RHINO_SYS_SP_ERR,
     RHINO_RUNNING,
-    RHINO_STOPPED
-
+    RHINO_STOPPED,
+    RHINO_INV_PARAM,
+    RHINO_NULL_PTR
 } kstat_t;
 
 typedef void (*krhino_err_proc_t) (kstat_t err) ;

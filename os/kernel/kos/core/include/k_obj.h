@@ -1,5 +1,48 @@
 #ifndef K_OBJ_H
 #define K_OBJ_H
 
+#include "k_list.h"
+
+typedef enum {
+    BLK_POLICY_PRI = 0u,
+    BLK_POLICY_FIFO
+} blk_policy_t;
+
+typedef enum {
+    BLK_FINISH = 0,
+    BLK_ABORT,
+    BLK_TIMEOUT,
+    BLK_DEL,
+    BLK_INVALID
+} blk_state_t;
+
+typedef enum {
+    RHINO_OBJ_TYPE_NONE = 0,
+    RHINO_SEM_OBJ_TYPE,
+    RHINO_MUTEX_OBJ_TYPE,
+    RHINO_QUEUE_OBJ_TYPE,
+    RHINO_BUF_QUEUE_OBJ_TYPE,
+    RHINO_TIMER_OBJ_TYPE,
+    RHINO_EVENT_OBJ_TYPE,
+    RHINO_MM_BLK_OBJ_TYPE,
+    RHINO_MM_OBJ_TYPE
+} kobj_type_t;
+
+typedef struct blk_obj {
+    klist_t          blk_list;
+    const name_t    *name;
+    uint8_t          blk_policy; // blk_policy_t
+    uint8_t          obj_type;   // blk_state_t
+} blk_obj_t;
+
+typedef struct {
+    klist_t task_head;
+    klist_t mutex_head;
+    //klist_t mblkpool_head;
+    klist_t sem_head;
+    //klist_t queue_head;
+    //klist_t event_head;
+    //klist_t buf_queue_head;
+} kobj_list_t;
 
 #endif //K_OBJ_H

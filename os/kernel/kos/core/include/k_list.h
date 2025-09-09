@@ -1,10 +1,66 @@
 #ifndef K_LIST_H
 #define K_LIST_H
 
+#include <stdio.h>
+#include "../../arch/include/k_types.h"
+#include <string.h>
+
 typedef struct klist_s{
     struct klist_s *next;
     struct klist_s *prev;
 } klist_t;
 
+RHINO_INLINE void klist_init(klist_t *list_head){
+    list_head->next = list_head;
+    list_head->prev = list_head;
+}
+
+RHINO_INLINE uint8_t is_klist_empty(klist_t *list)
+{
+    return (list->next == list);
+}
+
+RHINO_INLINE void klist_insert(klist_t *head, klist_t *element)
+{
+    element->prev = head->prev;
+    element->next = head;
+
+    head->prev->next = element;
+    head->prev       = element;
+}
+
+RHINO_INLINE void klist_add(klist_t *head, klist_t *element)
+{
+    element->prev = head;
+    element->next = head->next;
+
+    head->next->prev = element;
+    head->next = element;
+}
+
+RHINO_INLINE void klist_rm(klist_t *element)
+{
+    element->prev->next = element->next;
+    element->next->prev = element->prev;
+}
+
+RHINO_INLINE void klist_rm_init(klist_t *element)
+{
+    element->prev->next = element->next;
+    element->next->prev = element->prev;
+
+    element->next = element->prev = element;
+}
+
+RHINO_INLINE void klist_print(klist_t *element)
+{
+    klist_t *cur = element->next;
+    printf("list: ");
+    while (cur != element) {
+        printf("[%p] ", (void*)cur);
+        cur = cur->next;
+    }
+    printf("\n");
+}
 
 #endif //K_LIST_H

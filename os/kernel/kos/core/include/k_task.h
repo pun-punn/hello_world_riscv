@@ -1,6 +1,7 @@
 #ifndef K_TASK_H
 #define K_TASK_H
 
+#include <cstdint>
 #include <stdint.h>
 #include <stddef.h>
 
@@ -26,6 +27,12 @@ typedef struct {
     uint32_t         stack_size;
     klist_t          task_list;
 
+    suspend_nested_t suspend_count;
+
+    //struct mutex_s  *mutex_list;
+
+    klist_t          task_stats_item;
+
     klist_t          tick_list;
     tick_t           tick_match;
     tick_t           tick_remain;
@@ -36,8 +43,15 @@ typedef struct {
     const name_t    *task_name;
     task_stat_t      task_state;
 
+    uint32_t         time_slice;
+    uint32_t         time_total;
+    uint8_t          sched_policy;
+
+    uint8_t          cpu_num;
+
     uint8_t          prio;
     uint8_t          b_prio;
+    uint8_t          mm_alloc_flag;
 } ktask_t; //tcb
 
 typedef void (*task_entry_t)(void *arg);
@@ -51,4 +65,5 @@ kstat_t krhino_task_dyn_create(ktask_t **task, const name_t *name, void *arg,
                                tick_t ticks, size_t stack,
                                task_entry_t entry, uint8_t autorun);
 
+void    krhino_task_deathbed(void);
 #endif //K_TASK_H

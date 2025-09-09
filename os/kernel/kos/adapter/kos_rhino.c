@@ -24,7 +24,8 @@ k_status_t kos_kernel_start(void){
 
 k_status_t kos_kernel_task_new(k_task_entry_t task, const char *name, void *arg,
                                k_priority_t prio, uint32_t time_quanta,
-                               void *stack, uint32_t stack_size, k_task_handle_t *task_handle){
+                               void *stack, uint32_t stack_size, k_task_handle_t *task_handle)
+{
 
     if ((task_handle == NULL) || (stack_size % 4 != 0) || ((stack_size == 0) && (stack == NULL)) || prio <= KPRIO_IDLE || prio > KPRIO_REALTIME7) {
         return -22;

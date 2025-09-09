@@ -4,6 +4,7 @@
 
 #define CSK_CPU_STACK_EXTRAL    20
 
+#define RHINO_CONFIG_TIME_SLICE_DEFAULT      50
 #define RHINO_CONFIG_PRI_MAX                 62
 #define RHINO_CONFIG_USER_PRI_MAX            (RHINO_CONFIG_PRI_MAX - 2)
 
@@ -14,6 +15,8 @@
 #define RHINO_CONFIG_K_DYN_MEM_TASK_PRI      RHINO_CONFIG_USER_PRI_MAX
 #endif
 
+/* idel config*/
+#define RHINO_CONFIG_IDLE_TASK_STACK_SIZE    (256 + CSK_CPU_STACK_EXTRAL)
 
 /* kernel hook conf */
 #define RHINO_CONFIG_USER_HOOK               1

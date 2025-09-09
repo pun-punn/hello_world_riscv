@@ -26,14 +26,14 @@
 .global cpu_intrpt_save
 .type cpu_intrpt_save, %function
 cpu_intrpt_save:
-    csrr    a0, mstatus
-    csrc    mstatus, 8
+    csrr    a0, mstatus  # read a0 store in psr
+    csrc    mstatus, 8   # clear mie bit 3
     ret
 
 .global cpu_intrpt_restore
 .type cpu_intrpt_restore, %function
 cpu_intrpt_restore:
-    csrw    mstatus, a0
+    csrw    mstatus, a0 # write psr = a0 to mstatus
     ret
 
 /******************************************************************************
