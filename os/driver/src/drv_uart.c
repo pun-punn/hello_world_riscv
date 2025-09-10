@@ -46,8 +46,8 @@ uart_handle_t drv_uart_initialize(int32_t idx, uart_event_cb_t cb_event){
 
 int32_t drv_uart_config_baudrate(uart_handle_t handle, uint32_t baud, uint32_t cfg){
     uart_priv_t *uart_priv = handle;
-    uart_reg_t *addr_uart = (uart_reg_t*) (uart_priv->base);
-    gpio_reg_t *addr_gpio = (gpio_reg_t*) (uart_priv->gpio_base);
+    uart_reg_t *addr_uart = (uart_reg_t*)(uintptr_t)(uart_priv->base);
+    gpio_reg_t *addr_gpio = (gpio_reg_t*)(uintptr_t)(uart_priv->gpio_base);
 
     addr_gpio->DIR = 0x00000001;
     addr_gpio->MUX = 0x0000000F;
@@ -59,7 +59,7 @@ int32_t drv_uart_config_baudrate(uart_handle_t handle, uint32_t baud, uint32_t c
 
 int32_t drv_uart_putc(uart_handle_t handle, uint8_t ch){
     uart_priv_t *uart_priv = handle;
-    uart_reg_t *addr = (uart_reg_t*) (uart_priv->base);
+    uart_reg_t *addr = (uart_reg_t*)(uintptr_t)(uart_priv->base);
 
     uint32_t fifo;
     do { fifo = addr->STS;
@@ -73,7 +73,7 @@ int32_t drv_uart_putc(uart_handle_t handle, uint8_t ch){
 
 int32_t drv_uart_getc(uart_handle_t handle, uint8_t *ch){
     uart_priv_t *uart_priv = handle;
-    uart_reg_t *addr = (uart_reg_t*) (uart_priv->base);
+    uart_reg_t *addr = (uart_reg_t*)(uintptr_t)(uart_priv->base);
     uint32_t fifo = 0;
 
     while (fifo==0) {
@@ -86,7 +86,7 @@ int32_t drv_uart_getc(uart_handle_t handle, uint8_t *ch){
 
 int32_t drv_uart_puts(uart_handle_t handle, char *str){
     uart_priv_t *uart_priv = handle;
-    uart_reg_t *addr = (uart_reg_t*) (uart_priv->base);
+    uart_reg_t *addr = (uart_reg_t*)(uintptr_t)(uart_priv->base);
 
     uint32_t fifo = 0;
     while (*str) {
@@ -101,7 +101,7 @@ int32_t drv_uart_puts(uart_handle_t handle, char *str){
 
 int32_t drv_uart_gets(uart_handle_t handle, char *str){
     uart_priv_t *uart_priv = handle;
-    uart_reg_t *addr = (uart_reg_t*) (uart_priv->base);
+    uart_reg_t *addr = (uart_reg_t*)(uintptr_t)(uart_priv->base);
 
     uint8_t ch,fifo;
     drv_uart_getc(handle, &ch);

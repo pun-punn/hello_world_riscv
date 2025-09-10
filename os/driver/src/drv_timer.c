@@ -33,14 +33,14 @@ timer_handle_t drv_timer_initializa(int32_t idx, timer_event_cb_t cb_event){
 
 int32_t drv_timer_config(timer_handle_t handle, int cfg){
      timer_priv_t *timer_priv = handle;
-     timer_reg_t *addr = (timer_reg_t *) (timer_priv->base);
+     timer_reg_t *addr = (timer_reg_t *) (uintptr_t)(timer_priv->base);
      addr->CFG = cfg;
      return 0;
 }
 
 int32_t drv_timer_delay(timer_handle_t handle, int dly){
      timer_priv_t *timer_priv = handle;
-     timer_reg_t *addr = (timer_reg_t *) (timer_priv->base);
+     timer_reg_t *addr = (timer_reg_t *) (uintptr_t)(timer_priv->base);
 
      addr->BASE =  0;
      addr->CFG  = (TIMER_PRESCALE_1) | 0x1;
