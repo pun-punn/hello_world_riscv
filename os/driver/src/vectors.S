@@ -37,7 +37,7 @@ irq_nested_level:
     .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
 Default_IRQHandler:
-    nop #wake function not do any thing need to be generic irq
+    nop #weak function not do any thing need to be generic irq
 
 /******************************************************************************
  * Functions:

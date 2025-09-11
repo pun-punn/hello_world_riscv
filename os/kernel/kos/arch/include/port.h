@@ -6,7 +6,9 @@
 
 size_t cpu_intrpt_save(void);
 void   cpu_intrpt_restore(size_t psr);
-
+void   cpu_intrpt_switch(void);
+void   cpu_task_switch(void);
+void   cpu_first_task_start(void);
 void  *cpu_task_stack_init(cpu_stack_t *base, size_t size,
                            void *arg, task_entry_t entry);
 

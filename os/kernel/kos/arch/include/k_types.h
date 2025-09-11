@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define RHINO_NO_WAIT         0u
+#define RHINO_NO_WAIT                0u
 
 #define RHINO_TASK_STACK_OVF_MAGIC   0xdeadbeef
 #define RHINO_INTRPT_STACK_OVF_MAGIC 0xdeaddead

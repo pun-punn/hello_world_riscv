@@ -45,13 +45,22 @@ cpu_intrpt_restore:
 .global cpu_task_switch
 .type cpu_task_switch, %function
 cpu_task_switch:
-    nop
+    la      a0, g_intrpt_nested_level
+    lb      a0, (a0)
+    beqz    a0, __task_switch
+
+    la      a0, g_active_task
+    la      a1, g_preferred_ready_task
+    lw      a2, (a1)
+    sw      a2, (a0)
 
 .global cpu_intrpt_switch
 .type cpu_intrpt_switch, %function
 cpu_intrpt_switch:
-    nop
-
+    la      a0, g_active_task
+    la      a1, g_preferred_ready_task
+    lw      a2, (a1)                    #load  a1(g_preferred_ready_task) to a2
+    sw      a2, (a0)                    #store a2g_preferred_ready_task)  to a0 (replace g_active_task)
 
 /******************************************************************************
  * Functions:
@@ -60,7 +69,7 @@ cpu_intrpt_switch:
 .global cpu_first_task_start
 .type cpu_first_task_start, %function
 cpu_first_task_start:
-    nop
+    j       __task_switch_nosave
 
 /******************************************************************************
  * Functions:
@@ -69,11 +78,58 @@ cpu_first_task_start:
 
 .type __task_switch, %function
 __task_switch:
-    nop
+    addi    sp, sp, -60
+
+    sw      x1, 0(sp)
+    sw      x3, 4(sp)
+    sw      x4, 8(sp)
+    sw      x5, 12(sp)
+    sw      x6, 16(sp)
+    sw      x7, 20(sp)
+    sw      x8, 24(sp)
+    sw      x9, 28(sp)
+    sw      x10, 32(sp)
+    sw      x11, 36(sp)
+    sw      x12, 40(sp)
+    sw      x13, 44(sp)
+    sw      x14, 48(sp)
+    sw      x15, 52(sp)
+    sw      ra,  56(sp)
+
+    la      a1, g_active_task
+    lw      a1, (a1)
+    sw      sp, (a1)
 
 __task_switch_nosave:
-    nop
+    la      a0, g_preferred_ready_task # load address g_preferred_ready_task
+    la      a1, g_active_task          # load address g_active_task
+    lw      a2, (a0)                   # a2 = value g_preferred_ready_task
+    sw      a2, (a1)                   # store a1 = a2 = g_preferred_ready_task
 
+    lw      sp, (a2)                   # sp = g_preferred_ready_task
+
+    li      t0, MSTATUS_PRV1
+    csrs    mstatus, t0
+
+    lw      t0, 56(sp)
+    csrw    mepc, t0
+
+    lw      x1, 0(sp)
+    lw      x3, 4(sp)
+    lw      x4, 8(sp)
+    lw      x5, 12(sp)
+    lw      x6, 16(sp)
+    lw      x7, 20(sp)
+    lw      x8, 24(sp)
+    lw      x9, 28(sp)
+    lw      x10, 32(sp)
+    lw      x11, 36(sp)
+    lw      x12, 40(sp)
+    lw      x13, 44(sp)
+    lw      x14, 48(sp)
+    lw      x15, 52(sp)
+
+    addi    sp, sp, 60
 /******************************************************************************
  * Functions:
  *     void Default_IRQHandler(void);

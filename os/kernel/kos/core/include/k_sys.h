@@ -15,5 +15,6 @@ typedef int32_t         tick_i_t;
 
 kstat_t krhino_init(void);
 kstat_t krhino_start(void);
-
+kstat_t krhino_intrpt_enter(void);
+void    krhino_intrpt_exit(void);
 #endif //K_SYS_H

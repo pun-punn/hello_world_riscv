@@ -15,6 +15,12 @@
 #define RHINO_CONFIG_K_DYN_MEM_TASK_PRI      RHINO_CONFIG_USER_PRI_MAX
 #endif
 
+/* interrupt */
+#define RHINO_CONFIG_INTRPT_MAX_NESTED_LEVEL 188u
+
+/* tick */
+#define RHINO_CONFIG_TICKS_PER_SECOND        100
+
 /* idel config*/
 #define RHINO_CONFIG_IDLE_TASK_STACK_SIZE    (256 + CSK_CPU_STACK_EXTRAL)
 

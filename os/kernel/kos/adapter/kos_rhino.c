@@ -65,3 +65,18 @@ void kos_kernel_sched_resume(uint32_t sleep_ticks){
     }
     krhino_sched_enable();
 }
+
+k_status_t kos_kernel_intrpt_enter(void){
+    k_status_t ret = krhino_intrpt_enter();
+    if(ret == RHINO_SUCCESS){
+        return 0;
+    } else {
+        return -1;
+    }
+    return 0;
+}
+
+k_status_t kos_kernel_intrpt_exit(void){
+    krhino_intrpt_exit();
+    return 0;
+}

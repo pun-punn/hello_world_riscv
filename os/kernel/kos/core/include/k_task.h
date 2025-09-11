@@ -6,6 +6,7 @@
 #include <stddef.h>
 
 #include "../../arch/include/k_types.h"
+#include "k_err.h"
 #include "k_list.h"
 #include "k_sys.h"
 
@@ -56,14 +57,20 @@ typedef struct {
 
 typedef void (*task_entry_t)(void *arg);
 
-kstat_t krhino_task_create(ktask_t *task, const name_t *name, void *arg,
-                           uint8_t prio, tick_t ticks, cpu_stack_t *stack_buf,
-                           size_t stack_size, task_entry_t entry, uint8_t autorun);
+kstat_t  krhino_task_create(ktask_t *task, const name_t *name, void *arg,
+                            uint8_t prio, tick_t ticks, cpu_stack_t *stack_buf,
+                            size_t stack_size, task_entry_t entry, uint8_t autorun);
 
-kstat_t krhino_task_dyn_create(ktask_t **task, const name_t *name, void *arg,
-                               uint8_t pri,
-                               tick_t ticks, size_t stack,
-                               task_entry_t entry, uint8_t autorun);
+kstat_t  krhino_task_dyn_create(ktask_t **task, const name_t *name, void *arg,
+                                uint8_t pri,
+                                tick_t ticks, size_t stack,
+                                task_entry_t entry, uint8_t autorun);
 
-void    krhino_task_deathbed(void);
+kstat_t  krhino_task_sleep(tick_t dly);
+
+kstat_t  krhino_task_dyn_del(ktask_t *task);
+
+ktask_t *krhino_cur_task_get(void);
+
+void     krhino_task_deathbed(void);
 #endif //K_TASK_H

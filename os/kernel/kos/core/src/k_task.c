@@ -20,14 +20,14 @@ static kstat_t task_create(ktask_t *task, const name_t *name, void *arg,
 
     /* idle task is only allowed to create once*/
     if(prio == RHINO_IDLE_PRI){
-
-
-
-        RHINO_CRITICAL_EXIT();
-        return 0; /* RHINO_IDLE_TASK_EXIST*/
+        if(g_idle_spawned[cpu_num] >0u){
+            RHINO_CRITICAL_EXIT();
+            return 0; /* RHINO_IDLE_TASK_EXIST*/
+        }
+        g_idle_spawned[cpu_num] = 1u;
     }
 
-    //set memmory to 0
+    //clear memmory to 0
     memset(task,0,sizeof(ktask_t));
 
     //RR
@@ -50,7 +50,7 @@ static kstat_t task_create(ktask_t *task, const name_t *name, void *arg,
 
     task->task_stack_base = stack_buf;
     tmp = stack_buf;
-    //set stack to 0
+    //clear stack to 0
     memset(tmp,0,stack_size*sizeof(cpu_stack_t));
 
     task->task_name     = name;
@@ -67,7 +67,7 @@ static kstat_t task_create(ktask_t *task, const name_t *name, void *arg,
     klist_insert(&(g_kobj_list.task_head), &task->task_stats_item);
 
     if(autorun > 0u){
-
+        ready_list_add_tail(&g_ready_queue,task);
         if(g_sys_stat == RHINO_RUNNING){
             RHINO_CRITICAL_EXIT_SCHED();
             return RHINO_SUCCESS;
@@ -91,4 +91,40 @@ kstat_t krhino_task_dyn_create(ktask_t **task, const name_t *name, void *arg,
                                task_entry_t entry, uint8_t autorun){
 
     return 0;
+}
+
+kstat_t krhino_task_sleep(tick_t dly){
+
+}
+
+kstat_t krhino_task_dyn_del(ktask_t *task){
+
+    CPSR_ALLOC();
+
+    RHINO_CRITICAL_ENTER();
+
+    RHINO_CRITICAL_EXIT();
+
+
+    return 0;
+}
+
+ktask_t *krhino_cur_task_get(void){
+    CPSR_ALLOC();
+    ktask_t *task;
+    RHINO_CRITICAL_ENTER();
+    task = g_active_task[cpu_cur_get()];
+    RHINO_CRITICAL_EXIT();
+    return task;
+}
+
+void krhino_task_deathbed(void){
+    ktask_t *task;
+    task = krhino_cur_task_get();
+    if(task->mm_alloc_flag == K_OBJ_DYN_ALLOC){
+        krhino_task_dyn_del(NULL);
+    }
+    while(1){
+        krhino_task_sleep(RHINO_CONFIG_TICKS_PER_SECOND * 10);
+    }
 }

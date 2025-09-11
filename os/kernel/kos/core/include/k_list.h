@@ -10,6 +10,8 @@ typedef struct klist_s{
     struct klist_s *prev;
 } klist_t;
 
+#define krhino_list_entry(node, type, member) ((type *)((uint8_t *)(node) - (size_t)(&((type *)0)->member)))
+
 RHINO_INLINE void klist_init(klist_t *list_head){
     list_head->next = list_head;
     list_head->prev = list_head;

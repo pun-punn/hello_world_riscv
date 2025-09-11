@@ -1,6 +1,5 @@
 #include "../include/k_api.h"
 
-
 void idle_task(void *arg){
     CPSR_ALLOC();
     (void)arg;

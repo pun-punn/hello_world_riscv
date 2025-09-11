@@ -81,4 +81,10 @@ uint32_t kos_kernel_sched_suspend(void);
 // resume scheduler
 void kos_kernel_sched_resume(uint32_t sleep_ticks);
 
+//enter interrupt
+k_status_t kos_kernel_intrpt_enter(void);
+
+//exit interrupt
+k_status_t kos_kernel_intrpt_exit(void);
+
 #endif //KOS_API_KERNEL
