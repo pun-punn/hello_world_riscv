@@ -11,7 +11,7 @@ kstat_t krhino_init(void){
 
     kobj_list_init();
 
-    //k_mm_init();
+    k_mm_init();
 
     klist_init(&g_res_list);
     krhino_sem_create(&g_res_sem, "res_sem", 0);

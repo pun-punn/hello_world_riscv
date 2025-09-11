@@ -69,6 +69,9 @@ extern klist_t      g_res_list; /*link*/
 extern ktask_t      g_dyn_task; /*tcb*/
 extern cpu_stack_t  g_dyn_task_stack[RHINO_CONFIG_K_DYN_TASK_STACK]; /*stack 64+20*/
 
+/* k_mm.c */
+void k_mm_init(void);
+
 /* k_sched.c */
 void runqueue_init(runqueue_t *rq);
 void ready_list_add(runqueue_t *rq, ktask_t *task);
