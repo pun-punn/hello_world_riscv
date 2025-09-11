@@ -80,3 +80,26 @@ k_status_t kos_kernel_intrpt_exit(void){
     krhino_intrpt_exit();
     return 0;
 }
+
+
+void *kos_kernel_malloc(int32_t size, void *caller){
+    void *ret;
+    if (size < 1) return NULL;
+
+    kos_kernel_sched_suspend();
+    //ret = krhino_mm_alloc(size, caller);
+    kos_kernel_sched_resume(0);
+    return ret;
+}
+
+void  kos_kernel_free(void *ptr, void *caller){
+    kos_kernel_sched_suspend();
+    //krhino_mm_free(ptr);
+    kos_kernel_sched_resume(0);
+}
+
+void *kos_kernel_realloc(void *ptr, int32_t size, void *caller){
+    void *new_ptr;
+    //new_ptr = krhino_mm_realloc(ptr, size, caller);
+    return new_ptr;
+}

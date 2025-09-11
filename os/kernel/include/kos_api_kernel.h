@@ -65,18 +65,29 @@ typedef void (*k_task_entry_t) (void *arg) ;
 // task handle
 typedef void *k_task_handle_t ;
 
+
+/* =================================================================================== */
+/*                          Kernel Management Functions                                */
+/* =================================================================================== */
 // initialize kernel
 k_status_t kos_kernel_init(void);
 
 // start the kernel
 k_status_t kos_kernel_start(void);
 
+/* =================================================================================== */
+/*                         scheduler Management Functions                              */
+/* =================================================================================== */
+// suspend scheduler
+uint32_t kos_kernel_sched_suspend(void);
+
+/* =================================================================================== */
+/*                             Task Management Functions                               */
+/* =================================================================================== */
 // create new task
 k_status_t kos_kernel_task_new(k_task_entry_t task, const char *name, void *arg,
                                k_priority_t prio, uint32_t time_quanta,
                                void *stack, uint32_t stack_size, k_task_handle_t *task_handle);
-// suspend scheduler
-uint32_t kos_kernel_sched_suspend(void);
 
 // resume scheduler
 void kos_kernel_sched_resume(uint32_t sleep_ticks);
@@ -86,5 +97,35 @@ k_status_t kos_kernel_intrpt_enter(void);
 
 //exit interrupt
 k_status_t kos_kernel_intrpt_exit(void);
+
+/* =================================================================================== */
+/*                              Mutex Management Functions                             */
+/* =================================================================================== */
+
+
+/* =================================================================================== */
+/*                            Semaphore Management Functions                           */
+/* =================================================================================== */
+
+/* =================================================================================== */
+/*                          Memory Pool Management Functions                           */
+/* =================================================================================== */
+
+/* =================================================================================== */
+/*                          Message Queue Management Functions                         */
+/* =================================================================================== */
+
+
+/* =================================================================================== */
+/*                          Heap Management Functions                                  */
+/* =================================================================================== */
+//malloc
+void *kos_kernel_malloc(int32_t size, void *caller);
+
+//free
+void  kos_kernel_free(void *ptr, void *caller);
+
+//realloc
+void *kos_kernel_realloc(void *ptr, int32_t size, void *caller);
 
 #endif //KOS_API_KERNEL
