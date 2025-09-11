@@ -24,6 +24,7 @@ extern "C" {
 #include "k_sem.h"
 #include "k_time.h"
 #include "k_stats.h"
+#include "k_mm.h"
 #include "k_internal.h"
 
 #include "../../arch/include/port.h"
