@@ -1,7 +1,6 @@
 #ifndef K_TASK_H
 #define K_TASK_H
 
-#include <cstdint>
 #include <stdint.h>
 #include <stddef.h>
 

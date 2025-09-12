@@ -94,7 +94,7 @@ kstat_t krhino_task_dyn_create(ktask_t **task, const name_t *name, void *arg,
 }
 
 kstat_t krhino_task_sleep(tick_t dly){
-
+    return 0;
 }
 
 kstat_t krhino_task_dyn_del(ktask_t *task){

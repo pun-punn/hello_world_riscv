@@ -139,90 +139,92 @@ __task_switch_nosave:
 .global Default_IRQHandler
 .type   Default_IRQHandler, %function
 Default_IRQHandler:
+    nop
+
     /* reserved 15*4 bytes to save x1-x15 + mepc to stack if sp = 0x20001000 -> 0x20000FC4 */
-    addi    sp, sp, -60
+    #addi    sp, sp, -60
 
-    sw      x1, 0(sp) # 0x20000FC8 - 0x20000FC4
-    sw      x3, 4(sp)
-    sw      x4, 8(sp)
-    sw      x5, 12(sp)
-    sw      x6, 16(sp)
-    sw      x7, 20(sp)
-    sw      x8, 24(sp)
-    sw      x9, 28(sp)
-    sw      x10, 32(sp)
-    sw      x11, 36(sp)
-    sw      x12, 40(sp)
-    sw      x13, 44(sp)
-    sw      x14, 48(sp)
-    sw      x15, 52(sp)
+    #sw      x1, 0(sp) # 0x20000FC8 - 0x20000FC4
+    #sw      x3, 4(sp)
+    #sw      x4, 8(sp)
+    #sw      x5, 12(sp)
+    #sw      x6, 16(sp)
+    #sw      x7, 20(sp)
+    #sw      x8, 24(sp)
+    #sw      x9, 28(sp)
+    #sw      x10, 32(sp)
+    #sw      x11, 36(sp)
+    #sw      x12, 40(sp)
+    #sw      x13, 44(sp)
+    #sw      x14, 48(sp)
+    #sw      x15, 52(sp)
 
-    csrr    t0,  mepc
-    sw      t0,  56(sp) # 0x20001000 - 0x20000FFC
+    #csrr    t0,  mepc
+    #sw      t0,  56(sp) # 0x20001000 - 0x20000FFC
 
     /* load sp address (0x20000FC4) to tbc-> g_active_task (save context) */
-    la      a0, g_active_task
-    lw      a0, (a0)
-    sw      sp, (a0)
+    #la      a0, g_active_task
+    #lw      a0, (a0)
+    #sw      sp, (a0)
 
     /* load address g_top_irqstack to sp for isr to use stack */
-    la      sp, g_top_irqstack
+    #la      sp, g_top_irqstack
 
     /* read mcause to get offset */
-    csrr    a0, mcause    # if mcause =  0x80000007 (core timer)
-    andi    a0, a0, 0x3FF # mask 10 bits 0x80000007 & 0b1111111111 = 0x00000007
-    slli    a0, a0, 2     # left shift 2 bits to 7*4 = 28 (address is 4 bytes)
+    #csrr    a0, mcause    # if mcause =  0x80000007 (core timer)
+    #andi    a0, a0, 0x3FF # mask 10 bits 0x80000007 & 0b1111111111 = 0x00000007
+    #slli    a0, a0, 2     # left shift 2 bits to 7*4 = 28 (address is 4 bytes)
 
     /* jump to handler according to g_irqvector */
-    la      a1, g_irqvector  # base address g_irqvector
-    add     a1, a1, a0       # isr address = base + (mcause & 0x3FF) << 2
-    lw      a2, (a1)         # load jump address
-    jalr    a2
+    #la      a1, g_irqvector  # base address g_irqvector
+    #add     a1, a1, a0       # isr address = base + (mcause & 0x3FF) << 2
+    #lw      a2, (a1)         # load jump address
+    #jalr    a2
 
     /* restore sp address form tbc->g_active_task to sp (load context) */
-    la      a0, g_active_task
-    lw      a0, (a0)
-    lw      sp, (a0)
+    #la      a0, g_active_task
+    #lw      a0, (a0)
+    #lw      sp, (a0)
 
     /* get idx to point to clic */
-    csrr    a0, mcause
-    andi    a0, a0, 0x3FF
-    slli    a0, a0, 2
+    #csrr    a0, mcause
+    #andi    a0, a0, 0x3FF
+    #slli    a0, a0, 2
 
     /* clear pending */
-    li      a2, 0xE0801000 # base address CLIC_INT->[ip,ie,attr,ctrl] see core_e902.h
-    add     a2, a2, a0     # base + (mcause & 0x3FF) << 2
-    lb      a3, 0(a2)      # load current pending value to a2
-    li      a4, 1          # load 0x01 to a4
-    not     a4, a4         # convert 0x01 to 0xFE = 0x11111110 to a4
-    and     a5, a4, a3     # set bit 0 in pending value to 0 0x0000001 & 0x11111110 = 0
-    sb      a5, 0(a2)      # store in 0 pending value to address
+    #li      a2, 0xE0801000 # base address CLIC_INT->[ip,ie,attr,ctrl] see core_e902.h
+    #add     a2, a2, a0     # base + (mcause & 0x3FF) << 2
+    #lb      a3, 0(a2)      # load current pending value to a2
+    #li      a4, 1          # load 0x01 to a4
+    #not     a4, a4         # convert 0x01 to 0xFE = 0x11111110 to a4
+    #and     a5, a4, a3     # set bit 0 in pending value to 0 0x0000001 & 0x11111110 = 0
+    #sb      a5, 0(a2)      # store in 0 pending value to address
 
     /* Run in machine mode */
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
+    #li      t0, MSTATUS_PRV1
+    #csrs    mstatus, t0
 
     /* restore back x1-x15 mepc from stack to register */
-    lw      t0, 56(sp)
-    csrw    mepc, t0
+    #lw      t0, 56(sp)
+    #csrw    mepc, t0
 
-    lw      x1, 0(sp)
-    lw      x3, 4(sp)
-    lw      x4, 8(sp)
-    lw      x5, 12(sp)
-    lw      x6, 16(sp)
-    lw      x7, 20(sp)
-    lw      x8, 24(sp)
-    lw      x9, 28(sp)
-    lw      x10, 32(sp)
-    lw      x11, 36(sp)
-    lw      x12, 40(sp)
-    lw      x13, 44(sp)
-    lw      x14, 48(sp)
-    lw      x15, 52(sp)
+    #lw      x1, 0(sp)
+    #lw      x3, 4(sp)
+    #lw      x4, 8(sp)
+    #lw      x5, 12(sp)
+    #lw      x6, 16(sp)
+    #lw      x7, 20(sp)
+    #lw      x8, 24(sp)
+    #lw      x9, 28(sp)
+    #lw      x10, 32(sp)
+    #lw      x11, 36(sp)
+    #lw      x12, 40(sp)
+    #lw      x13, 44(sp)
+    #lw      x14, 48(sp)
+    #lw      x15, 52(sp)
 
-    addi    sp, sp, 60
+    #addi    sp, sp, 60
 
     /* return and switch to user mode */
-    mret
+    #mret
 

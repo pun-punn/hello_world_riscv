@@ -1,4 +1,4 @@
-NAME   = hello_world_rtos
+NAME   = hello_world_systick
 CDIR   = .
 MAKEDIR = $(shell pwd)
 ROOTDIR = $(MAKEDIR)#/../../../../../
@@ -19,7 +19,7 @@ HEX_BUILDDIR = hex_build
 export TARGET_CPU KERNEL HAVE_VIC
 
 #linker script
-LINKFILE = linker.ld
+LINKFILE = linker.lcf
 LINKDIR  = $(OSDIR)/board
 
 CC      = riscv64-unknown-elf-gcc
@@ -41,6 +41,7 @@ INCLUDEDIRS = \
 #source c
 CSRC = \
           $(OSDIR)/libs/libc/minilibc_port.c \
+          $(OSDIR)/libs/libc/malloc.c \
           $(shell find $(OSDIR)/driver/src/ -name "*.c")    \
           $(OSDIR)/board/*.c   \
 
@@ -52,7 +53,7 @@ SSRC += $(shell find $(OSDIR)/startup/ -name "*.S")
 SSRC += $(shell find $(OSDIR)/driver/src/ -name "*.S")
 
 #kernel
-#include sub.mk
+include sub.mk
 
 CFLAGS += $(INCLUDEDIRS)
 CFLAGS += -c -g -ffunction-sections -fdata-sections -Wall
@@ -106,8 +107,8 @@ $(NAME).elf: build_dir $(OBJECTS) $(LINKDIR)/$(LINKFILE)
 	-Wl,--whole-archive $(OBJECTS) $(DSP_LIB) $(VDSP_LIB) $(DSP_NN_LIB) $(VDSP_NN_LIB) $(NEWLIB_WRAP_LIB) $(NEWTHIRDPARTY_LIBS) -Wl,--no-whole-archive \
 	-Wl,-T$(LINKDIR)/$(LINKFILE) \
 	-lm -lc -lgcc -Wl,-gc-sections -Wl,-zmax-page-size=1024
-	@-mv $(OBJECTS) $(OBJDIR)
 	$(Q)$(OBJDUMP) -S $(BUILDDIR)/$(NAME).elf > $(BUILDDIR)/$(NAME).asm
+	@-mv $(OBJECTS) $(OBJDIR)
 hexfile:
 	@$(OBJCOPY) -O binary $(BUILDDIR)/$(NAME).elf $(BUILDDIR)/$(NAME).bin
 	@$(OBJCOPY) -O ihex   $(BUILDDIR)/$(NAME).elf $(BUILDDIR)/$(NAME).hex

@@ -97,4 +97,12 @@ Default_Handler:
     j      trap
     .size   Default_Handler, . - Default_Handler
 
+    .macro  def_irq_handler handler_name
+    .weak   \handler_name
+    .globl  \handler_name
+    .set    \handler_name, Default_Handler
+    .endm
+
+    def_irq_handler tspend_handler
+    def_irq_handler CORET_IRQHandler
 

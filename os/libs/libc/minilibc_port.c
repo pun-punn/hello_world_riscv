@@ -11,7 +11,8 @@
  ******************************************************************************/
 
 #include <stdio.h>
-#include "drv_uart.h"
+#include "../../driver/include/drv_uart.h"
+#include "../../kernel/include/kos_api_kernel.h"
 
 uart_handle_t console_handle = NULL;
 
@@ -48,3 +49,14 @@ int fgetc(FILE *stream)
     return ch;
 }
 
+int os_critical_enter(unsigned int *lock){
+     (void)lock;
+     kos_kernel_sched_suspend();
+     return 0;
+}
+
+int os_critical_exit(unsigned int *lock){
+     (void)lock;
+     kos_kernel_sched_resume(0);
+     return 0;
+}

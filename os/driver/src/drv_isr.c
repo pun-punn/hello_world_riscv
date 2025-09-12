@@ -9,9 +9,9 @@ extern void systick_handler(void);
 #define  ATTRIBUTE_ISR
 
 ATTRIBUTE_ISR void CORET_IRQHandler(void){
-    INTRPT_ENTER();
+    //INTRPT_ENTER();
     systick_handler();
-    INTRPT_EXIT();
+    //INTRPT_EXIT();
 }
 
 ATTRIBUTE_ISR void TIM0_IRQHandler(void){

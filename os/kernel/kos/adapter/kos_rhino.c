@@ -99,7 +99,7 @@ void  kos_kernel_free(void *ptr, void *caller){
 }
 
 void *kos_kernel_realloc(void *ptr, int32_t size, void *caller){
-    void *new_ptr;
+    void *new_ptr = NULL;
     //new_ptr = krhino_mm_realloc(ptr, size, caller);
     return new_ptr;
 }
