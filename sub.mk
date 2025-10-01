@@ -18,4 +18,5 @@ CSRC += $(OSDIR)/kernel/kos/core/src/k_sys.c
 CSRC += $(OSDIR)/kernel/kos/core/src/k_task.c
 CSRC += $(OSDIR)/kernel/kos/core/src/k_tick.c
 CSRC += $(OSDIR)/kernel/kos/core/src/k_time.c
+CSRC += $(OSDIR)/kernel/kos/core/src/k_pend.c
 endif

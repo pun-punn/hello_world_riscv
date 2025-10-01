@@ -1,7 +1,15 @@
 CC      = riscv64-unknown-elf-gcc
 AR      = riscv64-unknown-elf-ar
 
-CFLAGS  = -Os -Wall -I. -march=rv32emc -mabi=ilp32e -ffunction-sections -fdata-sections
+ifeq ($(MODE),qemu)
+    TARGET_CPU = rv32imac
+    ABI        = ilp32
+else
+    TARGET_CPU = rv32emc
+    ABI        = ilp32e
+endif
+
+CFLAGS  = -Os -Wall -I. -march=$(TARGET_CPU) -mabi=$(ABI) -ffunction-sections -fdata-sections
 
 SRCS    = $(wildcard *.c)
 OBJS    = $(SRCS:.c=.o)

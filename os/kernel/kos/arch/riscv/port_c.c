@@ -25,3 +25,7 @@ void *cpu_task_stack_init(cpu_stack_t *base, size_t size, void *arg, task_entry_
 
     return stk;
 }
+
+void irq_hook(void){
+    printf("h");
+}

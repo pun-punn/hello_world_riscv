@@ -30,7 +30,7 @@ do {                                \
 #define RHINO_CRITICAL_EXIT_SCHED() \
 do {                                \
     RHINO_CPU_INTRPT_ENABLE();      \
-    /*core_sched();*/               \
+    core_sched();                   \
 } while (0)
 
 #endif //K_CRITICAL_H

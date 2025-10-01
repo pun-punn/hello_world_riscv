@@ -5,10 +5,8 @@ void idle_task(void *arg){
     (void)arg;
     while (1){
         RHINO_CPU_INTRPT_DISABLE();
-        g_idle_count[cpu_cur_get()]++;
+        //g_idle_count[cpu_cur_get()]++;
+        printf("%d\n", (int)g_idle_count[cpu_cur_get()]);
         RHINO_CPU_INTRPT_ENABLE();
-        //hook
-
-        //pwr mgmt
     }
 }

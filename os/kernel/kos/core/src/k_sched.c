@@ -121,6 +121,42 @@ void ready_lsit_add(runqueue_t *rq, ktask_t *task){
     }
 }
 
+void ready_list_rm(runqueue_t *rq, ktask_t *task){
+    int32_t  i;
+    uint8_t  pri = task->prio;
+
+    /* if the ready list is not only one, we do not need to update the highest prio */
+    if ((rq->cur_list_item[pri]) != (rq->cur_list_item[pri]->next)) {
+        if (rq->cur_list_item[pri] == &task->task_list) {
+            rq->cur_list_item[pri] = rq->cur_list_item[pri]->next;
+        }
+
+        klist_rm(&task->task_list);
+        return;
+    }
+
+    /* only one item,just set cur item ptr to NULL */
+    rq->cur_list_item[pri] = NULL;
+
+    krhino_bitmap_clear(rq->task_bit_map, pri);
+
+    /* if task prio not equal to the highest prio, then we do not need to update the highest prio */
+    /* this condition happens when a current high prio task to suspend a low priotity task */
+    if (pri != rq->highest_pri) {
+        return;
+    }
+
+    /* find the highest ready task */
+    i = krhino_find_first_bit(rq->task_bit_map);
+
+    /* update the next highest prio task */
+    if (i >= 0) {
+        rq->highest_pri = i;
+    } else {
+        //k_err_proc(RHINO_SYS_FATAL_ERR);
+    }
+}
+
 void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num){
     klist_t *node = rq->cur_list_item[rq->highest_pri];
     g_preferred_ready_task[cpu_cur_get()] = krhino_list_entry(node, ktask_t ,task_list );
@@ -142,6 +178,7 @@ void time_slice_update(void){
     }
 
     task = krhino_list_entry(head,ktask_t,task_list);
+
     /* check scheduler policy */
     if(task->sched_policy == KSCHED_FIFO){
         RHINO_CRITICAL_EXIT();

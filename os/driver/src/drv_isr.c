@@ -1,4 +1,5 @@
 #include "../include/soc.h"
+#include "../../kernel/kos/core/include/k_api.h"
 #include "../../kernel/include/kos_api_kernel.h"
 
 #define INTRPT_ENTER() kos_kernel_intrpt_enter()
@@ -9,9 +10,10 @@ extern void systick_handler(void);
 #define  ATTRIBUTE_ISR
 
 ATTRIBUTE_ISR void CORET_IRQHandler(void){
-    //INTRPT_ENTER();
+    INTRPT_ENTER();
+    g_idle_count[cpu_cur_get()]++;
     systick_handler();
-    //INTRPT_EXIT();
+    INTRPT_EXIT();
 }
 
 ATTRIBUTE_ISR void TIM0_IRQHandler(void){

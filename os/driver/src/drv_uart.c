@@ -61,13 +61,11 @@ int32_t drv_uart_putc(uart_handle_t handle, uint8_t ch){
     uart_priv_t *uart_priv = handle;
     uart_reg_t *addr = (uart_reg_t*)(uintptr_t)(uart_priv->base);
 
-    uint32_t fifo;
-    do { fifo = addr->STS;
-      fifo = fifo&0x1F;
-    } while (fifo==16);
-
     addr->DATA = ch;
-
+    uint32_t fifo;
+    do{
+        fifo = addr->STS & 0x1F;
+    } while(fifo == 16);
     return 0;
 }
 

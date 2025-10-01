@@ -27,11 +27,17 @@ klist_t      g_tick_head;
 kobj_list_t  g_kobj_list;
 
 
-/*task idle */
+/* task idle */
 ktask_t      g_idle_task[RHINO_CONFIG_CPU_NUM];
 idle_count_t g_idle_count[RHINO_CONFIG_CPU_NUM];
 cpu_stack_t  g_idle_task_stack[RHINO_CONFIG_CPU_NUM][RHINO_CONFIG_IDLE_TASK_STACK_SIZE];
 uint8_t      g_idle_spawned[RHINO_CONFIG_CPU_NUM];
+
+/* test task*/
+ktask_t      g_test_task1; /*tcb*/
+ktask_t      g_test_task2; /*tcb*/
+cpu_stack_t  g_test_task1_stack[RHINO_CONFIG_K_DYN_TASK_STACK];
+cpu_stack_t  g_test_task2_stack[RHINO_CONFIG_K_DYN_TASK_STACK];
 
 /* task dynamic memory alloc */
 ksem_t       g_res_sem;

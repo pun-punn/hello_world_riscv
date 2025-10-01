@@ -1,4 +1,4 @@
-NAME   = hello_world_systick
+NAME   = hello_world_rtos
 CDIR   = .
 MAKEDIR = $(shell pwd)
 ROOTDIR = $(MAKEDIR)#/../../../../../
@@ -10,7 +10,19 @@ OBJDIR = $(BUILDDIR)/obj
 CFLAGS += -g2
 CFLAGS += -Os
 
-TARGET_CPU = rv32emc
+MODE ?= e902
+
+ifeq ($(MODE),qemu)
+    #TARGET_CPU = rv32imac
+    #ABI        = ilp32
+	TARGET_CPU = rv32emc
+    ABI        = ilp32e
+else
+    TARGET_CPU = rv32emc
+    ABI        = ilp32e
+endif
+
+#TARGET_CPU = rv32emc
 KERNEL = kos
 HAVE_VIC = y
 
@@ -19,8 +31,13 @@ HEX_BUILDDIR = hex_build
 export TARGET_CPU KERNEL HAVE_VIC
 
 #linker script
-LINKFILE = linker.lcf
-LINKDIR  = $(OSDIR)/board
+ifeq ($(MODE),qemu)
+	LINKFILE = linker_qemu.ld
+	LINKDIR  = $(OSDIR)/board
+else
+	LINKFILE = linker.ld
+	LINKDIR  = $(OSDIR)/board
+endif
 
 CC      = riscv64-unknown-elf-gcc
 LD      = riscv64-unknown-elf-ld
@@ -57,23 +74,31 @@ include sub.mk
 
 CFLAGS += $(INCLUDEDIRS)
 CFLAGS += -c -g -ffunction-sections -fdata-sections -Wall
-ifeq ($(strip $(TARGET_CPU)),$(filter $(TARGET_CPU), rv32ec rv32emc))
-CFLAGS += -march=$(TARGET_CPU) -mabi=ilp32e
-LDFLAGS += -march=$(TARGET_CPU) -mabi=ilp32e
-else
-ifeq ($(TARGET_CPU), rv32imac)
-CFLAGS += -march=$(TARGET_CPU) -mabi=ilp32
-LDFLAGS += -march=$(TARGET_CPU) -mabi=ilp32
-else
-CFLAGS += -mcpu=$(TARGET_CPU)
-LDFLAGS += -mcpu=$(TARGET_CPU)
-endif
-endif
+#ifeq ($(strip $(TARGET_CPU)),$(filter $(TARGET_CPU), rv32ec rv32emc))
+#CFLAGS += -march=$(TARGET_CPU) -mabi=ilp32e
+#LDFLAGS += -march=$(TARGET_CPU) -mabi=ilp32e
+#else
+#ifeq ($(TARGET_CPU), rv32imac)
+#CFLAGS += -march=$(TARGET_CPU) -mabi=ilp32
+#LDFLAGS += -march=$(TARGET_CPU) -mabi=ilp32
+#else
+#CFLAGS += -mcpu=$(TARGET_CPU)
+#LDFLAGS += -mcpu=$(TARGET_CPU)
+#endif
+#endif
+CFLAGS += -march=$(TARGET_CPU) -mabi=$(ABI)
+LDFLAGS += -march=$(TARGET_CPU) -mabi=$(ABI)
 
 LDFLAGS +=
 
-NEWLIB_WRAP_LIB += $(OSDIR)/libs/libnewlib_wrap.a
-NEWTHIRDPARTY_LIBS +=
+ifeq ($(MODE),qemu)
+    #NEWLIB_WRAP_LIB += $(OSDIR)/libs/libnewlib_wrap_imac.a
+    NEWLIB_WRAP_LIB += $(OSDIR)/libs/libnewlib_wrap.a
+    NEWTHIRDPARTY_LIBS +=
+else
+    NEWLIB_WRAP_LIB += $(OSDIR)/libs/libnewlib_wrap.a
+    NEWTHIRDPARTY_LIBS +=
+endif
 
 export CC AS AR LD GS RM OBJDUMP CFLAGS AFLAGS MV
 Q = @

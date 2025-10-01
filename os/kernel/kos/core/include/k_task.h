@@ -8,6 +8,7 @@
 #include "k_err.h"
 #include "k_list.h"
 #include "k_sys.h"
+#include "k_obj.h"
 
 typedef enum {
     K_SEED,
@@ -42,6 +43,8 @@ typedef struct {
 
     const name_t    *task_name;
     task_stat_t      task_state;
+    blk_state_t      blk_state;
+    blk_obj_t       *blk_obj;
 
     uint32_t         time_slice;
     uint32_t         time_total;

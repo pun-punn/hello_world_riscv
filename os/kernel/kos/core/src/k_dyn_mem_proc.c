@@ -2,7 +2,38 @@
 
 //process task
 void dyn_mem_proc_task(void *arg){
+    CPSR_ALLOC();
 
+    kstat_t     ret;
+    res_free_t *res_free;
+    res_free_t  tmp;
+    uint32_t    i;
+
+    (void)arg;
+
+    while (1) {
+        ret = krhino_sem_take(&g_res_sem, RHINO_WAIT_FOREVER);
+        if (ret != RHINO_SUCCESS) {
+
+        }
+
+        while (1) {
+            RHINO_CRITICAL_ENTER();
+            if (!is_klist_empty(&g_res_list)) {
+                res_free = krhino_list_entry(g_res_list.next, res_free_t, res_list);
+                klist_rm(&res_free->res_list);
+                RHINO_CRITICAL_EXIT();
+                memcpy(&tmp, res_free, sizeof(res_free_t));
+                for (i = 0; i < tmp.cnt; i++) {
+                    //krhino_mm_free(tmp.res[i]);
+                }
+            }
+            else {
+                RHINO_CRITICAL_EXIT();
+                break;
+            }
+        }
+    }
 
 }
 

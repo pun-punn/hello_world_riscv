@@ -29,6 +29,13 @@
             }                           \
         } while(0)
 
+#define RES_FREE_NUM 4
+
+typedef struct {
+    uint8_t cnt;
+    void   *res[RES_FREE_NUM];
+    klist_t res_list;
+} res_free_t;
 /*   */
 //status
 extern kstat_t     g_sys_stat;
@@ -63,6 +70,14 @@ extern idle_count_t g_idle_count[RHINO_CONFIG_CPU_NUM]; /*count idle*/
 extern cpu_stack_t  g_idle_task_stack[RHINO_CONFIG_CPU_NUM][RHINO_CONFIG_IDLE_TASK_STACK_SIZE]; /*stack 256+20*/
 extern uint8_t      g_idle_spawned[RHINO_CONFIG_CPU_NUM]; /*idle task check */
 
+//idle test task
+void                test_task1(void *p_arg);
+void                test_task2(void *p_arg);
+extern ktask_t      g_test_task1; /*tcb*/
+extern ktask_t      g_test_task2; /*tcb*/
+extern cpu_stack_t  g_test_task1_stack[RHINO_CONFIG_K_DYN_TASK_STACK];
+extern cpu_stack_t  g_test_task2_stack[RHINO_CONFIG_K_DYN_TASK_STACK];
+
 //dynamic memory alloc task
 extern ksem_t       g_res_sem;  /*sem*/
 extern klist_t      g_res_list; /*link*/
@@ -85,6 +100,12 @@ void preferred_cpu_ready_task_get(runqueue_t *rq, uint8_t cpu_num);
 
 /* k_dyn_mem_proc.c */
 void dyn_mem_proc_task_start(void);
+
+/* k_pend.c */
+void pend_list_reorder(ktask_t *task);
+void pend_task_wakeup(ktask_t *task);
+void pend_to_blk_obj(blk_obj_t *blk_obj, ktask_t *task, tick_t timeout);
+void pend_task_rm(ktask_t *task);
 
 /* tick link list k_tick.c */
 void tick_list_init(void);

@@ -13,31 +13,43 @@ kstat_t krhino_init(void){
 
     k_mm_init();
 
-    klist_init(&g_res_list);
-    krhino_sem_create(&g_res_sem, "res_sem", 0);
-    dyn_mem_proc_task_start();
+    //klist_init(&g_res_list);
+    //krhino_sem_create(&g_res_sem, "res_sem", 0);
+    //dyn_mem_proc_task_start();
 
     //create idle task
     krhino_task_create(&g_idle_task[0] /* tcb */, "idle_task", NULL, RHINO_IDLE_PRI, 0,
                        &g_idle_task_stack[0][0], RHINO_CONFIG_IDLE_TASK_STACK_SIZE /*256 + 20*/,
                        idle_task, 1u);
+
+    //create task1
+    krhino_task_create(&g_test_task1 /* tcb */, "task1", NULL, 10, 0,
+                       g_test_task1_stack, RHINO_CONFIG_K_DYN_TASK_STACK /*64 + 20*/,
+                        test_task1, 1u);
+    //create task2
+    krhino_task_create(&g_test_task2 /* tcb */, "task2", NULL, 10, 0,
+                       g_test_task2_stack, RHINO_CONFIG_K_DYN_TASK_STACK /*64 + 20*/,
+                       test_task2, 1u);
     //ktimer_init();
-
-    //cpu_usage_stats_start();
-
-    //rhino_stack_check_init();
 
     return RHINO_SUCCESS;
 }
 
 kstat_t krhino_start(void){
+    //CPSR_ALLOC();
     if (g_sys_stat == RHINO_STOPPED) {
+        //RHINO_CPU_INTRPT_DISABLE();
         preferred_cpu_ready_task_get(&g_ready_queue, 0);
         g_active_task[0] = g_preferred_ready_task[0];
 
+        //cpu_stack_t *sp = g_active_task[0]->task_stack;
+        //printf("active task %s \r\n", g_active_task[0]->task_name);
+        //for (int i = 0; i < 16; i++) {
+        //    printf("[%02d] 0x%08lx\r\n", i, (unsigned long)sp[i]);
+        //}
         g_sys_stat = RHINO_RUNNING;
         cpu_first_task_start();
-
+        //RHINO_CPU_INTRPT_ENABLE();
         /* should not be here */
         return RHINO_SYS_FATAL_ERR;
     }
@@ -85,6 +97,8 @@ void krhino_intrpt_exit(void){
 
     /*get g_preferred_ready_task from g_ready_queue*/
     preferred_cpu_ready_task_get(&g_ready_queue, cur_cpu_num);
+    cpu_stack_t *sp = g_active_task[0]->task_stack;
+    printf("ret: 0x%08lx\n",(unsigned long)sp[14]);
     if(g_preferred_ready_task[cur_cpu_num] == g_active_task[cur_cpu_num]){
         RHINO_CPU_INTRPT_ENABLE();
         return;

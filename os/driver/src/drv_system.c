@@ -6,11 +6,11 @@ extern void irq_vectors_init(void);
 
 static void _system_init_for_kernel(void){
 
-    //irq_vectors_init();
+    irq_vectors_init();
 
     //config core timer
     drv_irq_enable(CORET_IRQn); //enable core timer interrupt
-    //__enable_irq();
+    __enable_irq();
 }
 
 void system_init(void){

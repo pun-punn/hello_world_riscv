@@ -20,8 +20,38 @@
 #endif
 
 __ALWAYS_STATIC_INLINE void __enable_irq(void){
-    __ASM volatile ("csrs mstatus, 8");
+    __ASM volatile ("csrsi mstatus, 0x8");
+    __ASM volatile ("csrsi mie, 0x7");
 }
 
+__ALWAYS_STATIC_INLINE uint32_t __get_MSTATUS(void){
+    uintptr_t result;
+    __ASM volatile("csrr %0, mstatus" : "=r"(result));
+    return (uint32_t)(result);
+}
+
+__ALWAYS_STATIC_INLINE uint32_t __get_MCAUSE(void){
+    uintptr_t result;
+    __ASM volatile("csrr %0, mcause" : "=r"(result));
+    return (uint32_t)(result);
+}
+
+__ALWAYS_STATIC_INLINE uint32_t __get_MIE(void){
+    uintptr_t result;
+    __ASM volatile("csrr %0, mie" : "=r"(result));
+    return (uint32_t)(result);
+}
+
+__ALWAYS_STATIC_INLINE uint32_t __get_MTVEC(void){
+    uintptr_t result;
+    __ASM volatile("csrr %0, mtvec" : "=r"(result));
+    return (uint32_t)(result);
+}
+
+__ALWAYS_STATIC_INLINE uint32_t __get_MTVT(void){
+    uintptr_t result;
+    __ASM volatile("csrr %0, mtvt" : "=r"(result));
+    return (uint32_t)(result);
+}
 
 #endif //CORE_E902_GCC_H

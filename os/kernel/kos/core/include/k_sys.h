@@ -7,6 +7,7 @@
 
 #define RHINO_IDLE_PRI (RHINO_CONFIG_PRI_MAX -1 )
 
+#define RHINO_WAIT_FOREVER ((uint32_t)-1)
 typedef uint32_t        sys_time_t;
 typedef uint32_t        sys_time_i_t;
 typedef uint32_t        idle_count_t;

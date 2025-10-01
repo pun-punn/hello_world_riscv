@@ -61,6 +61,9 @@ static kstat_t task_create(ktask_t *task, const name_t *name, void *arg,
     task->cpu_num       = cpu_num;
     cpu_binded          = cpu_binded;
 
+    tmp  = task->task_stack_base;
+    *tmp = RHINO_TASK_STACK_OVF_MAGIC;
+
     task->task_stack = cpu_task_stack_init(stack_buf,stack_size,arg,entry);
 
     RHINO_CRITICAL_ENTER();
@@ -125,6 +128,27 @@ void krhino_task_deathbed(void){
         krhino_task_dyn_del(NULL);
     }
     while(1){
+        printf("krhino_task_deathbed \r\n");
         krhino_task_sleep(RHINO_CONFIG_TICKS_PER_SECOND * 10);
+    }
+}
+
+void test_task1(void *arg){
+    CPSR_ALLOC();
+    (void)arg;
+    while (1){
+        RHINO_CPU_INTRPT_DISABLE();
+        printf("t1\n");
+        RHINO_CPU_INTRPT_ENABLE();
+    }
+}
+
+void test_task2(void *arg){
+    CPSR_ALLOC();
+    (void)arg;
+    while (1){
+        RHINO_CPU_INTRPT_DISABLE();
+        printf("t2\n");
+        RHINO_CPU_INTRPT_ENABLE();
     }
 }
