@@ -13,6 +13,12 @@ ATTRIBUTE_ISR void CORET_IRQHandler(void){
     INTRPT_ENTER();
     g_idle_count[cpu_cur_get()]++;
     systick_handler();
+    CLINTCMP->MTIMECMP = CLINTTIME->MTIME + 50000;
+
+    if(g_idle_count[0] == 10){
+        SIMULATION->END = 1;
+    }
+
     INTRPT_EXIT();
 }
 

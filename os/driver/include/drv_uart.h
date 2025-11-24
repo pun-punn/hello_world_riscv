@@ -2,6 +2,7 @@
 #define DRV_UART_H
 
 #include "soc.h"
+#include "../include/drv_clk.h"
 #include <stdint.h>
 
 typedef void *uart_handle_t;
@@ -12,17 +13,6 @@ typedef struct {
     _IO uint32_t BAUD;
     _I  uint32_t STS;
 } uart_reg_t;
-
-typedef struct {
-    _IO uint32_t DATA;
-    _IO uint32_t SET;
-    _IO uint32_t CLR;
-    _IO uint32_t DIR;
-    _IO uint32_t MUX;
-    _IO uint32_t EXT;
-    _IO uint32_t DLY;
-    _IO uint32_t STS;
-} gpio_reg_t;
 
 typedef enum {
     UART_EVENT_SEND_COMPLETE       = 0,

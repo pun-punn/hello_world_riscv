@@ -15,6 +15,7 @@
 #include "../../kernel/include/kos_api_kernel.h"
 
 uart_handle_t console_handle = NULL;
+clk_handle_t  clk_handle = NULL;
 
 __attribute__((weak)) int write(int __fd, __const void *__buf, int __n)
 {

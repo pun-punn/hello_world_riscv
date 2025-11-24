@@ -8,12 +8,11 @@
 #define   _O     volatile
 #define   _IO    volatile
 
-
 #define CLIC_INTIP_IP_Pos                      0U                                    /*!< CLIC INTIP: IP Position */
-#define CLIC_INTIP_IP_Msk                      (0x1UL << CLIC_INTIP_IP_Pos)          /*!< CLIC INTIP: IP Mask */
+#define CLIC_INTIP_IP                         (0x1UL << CLIC_INTIP_IP_Pos)           /*!< CLIC INTIP: IP Mask */
 
 #define CLIC_INTIE_IE_Pos                      0U                                    /*!< CLIC INTIE: IE Position */
-#define CLIC_INTIE_IE_Msk                      (0x1UL << CLIC_INTIE_IE_Pos)          /*!< CLIC INTIE: IE Mask */
+#define CLIC_INTIE_IE                         (0x1UL << CLIC_INTIE_IE_Pos)           /*!< CLIC INTIE: IE Mask */
 
 typedef struct{
     _IO uint32_t MSIP;
@@ -22,11 +21,19 @@ typedef struct{
 typedef struct{
     _IO uint32_t MTIMECMPLO;
     _IO uint32_t MTIMECMPHI;
+} CLINTCMPS_TypeDef;
+
+typedef struct{
+    _IO uint64_t MTIMECMP;
 } CLINTCMP_TypeDef;
 
 typedef struct{
     _I uint32_t MTIMELO;
     _I uint32_t MTIMEHI;
+} CLINTTIMES_TypeDef;
+
+typedef struct{
+    _I uint64_t MTIME;
 } CLINTTIME_TypeDef;
 
 typedef struct{
@@ -66,8 +73,8 @@ typedef struct{
 __STATIC_INLINE void vic_enable_irq(int32_t IRQn){
     CLIC->INT[IRQn].CLICINTIP   = 0x00;
     CLIC->INT[IRQn].CLICINTIE   = 0x01;
-    CLIC->INT[IRQn].CLICINTATTR = 0x01;
-    CLIC->INT[IRQn].CLICINTCTRL = 0x7f;
+    CLIC->INT[IRQn].CLICINTATTR = 0x03;
+    CLIC->INT[IRQn].CLICINTCTRL = 0x00; //0x7f
 }
 
 __STATIC_INLINE void vic_disable_irq(int32_t IRQn){
@@ -82,7 +89,7 @@ __STATIC_INLINE uint8_t vic_get_pend_irq(int32_t IRQn){
 }
 
 __STATIC_INLINE uint8_t vic_get_enable_irq(int32_t IRQn){
-    return (uint8_t)(CLIC->INT[IRQn].CLICINTIE & CLIC_INTIE_IE_Msk);
+    return (uint8_t)(CLIC->INT[IRQn].CLICINTIE & CLIC_INTIE_IE);
 }
 
 __STATIC_INLINE uint8_t vic_get_attr_irq(int32_t IRQn){

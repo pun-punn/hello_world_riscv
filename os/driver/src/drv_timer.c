@@ -43,7 +43,7 @@ int32_t drv_timer_delay(timer_handle_t handle, int dly){
      timer_reg_t *addr = (timer_reg_t *) (uintptr_t)(timer_priv->base);
 
      addr->BASE =  0;
-     addr->CFG  = (TIMER_PRESCALE_1) | 0x1;
+     addr->CFG  = (TIM_CFG_PRESCALE_DIV1) | 0x1;
 
      while ((addr->CNT)<=dly);
 

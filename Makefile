@@ -1,4 +1,4 @@
-NAME   = hello_world_rtos
+NAME   = xuantie_e902m
 CDIR   = .
 MAKEDIR = $(shell pwd)
 ROOTDIR = $(MAKEDIR)#/../../../../../
@@ -15,7 +15,7 @@ MODE ?= e902
 ifeq ($(MODE),qemu)
     #TARGET_CPU = rv32imac
     #ABI        = ilp32
-	TARGET_CPU = rv32emc
+    TARGET_CPU = rv32emc
     ABI        = ilp32e
 else
     TARGET_CPU = rv32emc

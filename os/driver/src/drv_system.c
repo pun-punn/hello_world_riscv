@@ -17,8 +17,8 @@ void system_init(void){
     //config core local interrupt controller
     CLIC->CLICCFG = 0x6UL;
 
-    uint32_t tick = 100000; // cycles
-    CLINTCMP->MTIMECMPLO = CLINTTIME->MTIMELO + tick;
+    uint32_t tick = 50000; // cycles
+    CLINTCMP->MTIMECMP = CLINTTIME->MTIME + tick;
 
     //set interrupt pendding
     for (int i = 0; i < 12; i++) {
